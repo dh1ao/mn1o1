@@ -1,3 +1,5 @@
+import Peer from 'peerjs'; // npm install --save peerjs
+
 export class PeerConnector {
     constructor() {
         
@@ -8,16 +10,16 @@ export class PeerConnector {
         this.onClose = null;
         this.onData = null;
 
-        if(this.constructor == PeerConnector) {
+        /* if(this.constructor == PeerConnector) {
             console.log('Hä?');
             throw new Error("abstract classes cannot be instatiated").stack;
-        }
-            
+        }  */    
     }
 
     init() {
         return new Promise(resolve=>{
-            this.peer = new Peer({ key: 'lwjd5qra8257b9',
+            // this.peer = new Peer({ key: 'lwjd5qra8257b9',
+            this.peer = new Peer({ key: 'peerjs',
                                     debug : 1,
                                     /* config : { 'iceServers': [
                                          { urls: 'stun:stun.l.google.com:19302' },
@@ -29,7 +31,7 @@ export class PeerConnector {
                                         }
                                     ]} */
                                 });
-            
+                                
             this.peer.on('error', (err) => {if(this.onError)
                 this.onError(err);});
             this.peer.on('open', (id) => {
