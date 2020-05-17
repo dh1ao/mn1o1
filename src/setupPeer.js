@@ -15,22 +15,20 @@ export function getCamCon() {
     return datacon;
 }
 
-function  onAdrLink(lnk) {
-    console.log(lnk);
-    
-}
-
-export function setupPeer() {
+export function setupPeer(cbs) {
     rId = remoteIdKnown();
     if(!rId) {
         datacon = new PeerConnectorInitiator();
-        datacon.onAddressLink = onAdrLink;
+        datacon.onAddressLink = cbs.onAddressLink;
+        console.log(datacon);
+        
         datacon.init();
     }
     else {
         datacon = new PeerConnectorRemote();
         datacon.init(rId);
     }
+    datacon.onDataConnection = cbs.onDataConnection;
     camCon = new CamChat(datacon);
     camCon.init();
 }

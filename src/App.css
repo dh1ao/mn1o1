@@ -30,6 +30,11 @@ canvas {
   height : 30px;
   margin-bottom: 30px;;
 }
+
+.ouradr {
+  width: 200px;
+}
+
 .callBtn {
   font-size: 1cm;
 }
