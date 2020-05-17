@@ -6,8 +6,10 @@ class PlayGround extends React.Component {
     return (
       <div>
         <canvas></canvas>
-        <video></video>
-        <video></video>
+        <div className="videos">
+          <video className="video"></video>
+          <video className="video"></video>
+        </div>
       </div>
     );
   }
