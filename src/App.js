@@ -1,18 +1,22 @@
 import React from 'react';
 import './App.css';
 
-class Huhu extends React.Component {
+class PlayGround extends React.Component {
   render() {
-    return (<h2>Tach zusammen </h2>);
+    return (
+      <div>
+        <canvas></canvas>
+        <video></video>
+        <video></video>
+      </div>
+    );
   }
 }
 
 function App() {
   return (
-    <div>
-      <h1>Hallo Welt</h1>
-      <Huhu/>
-    </div>
+    // <h1>Tach</h1>
+    <PlayGround />
   );
 }
 
