@@ -1,9 +1,9 @@
 import {PeerConnector} from './PeerConnector';
 
 export class PeerConnectorRemote extends PeerConnector {
-    constructor() {
+    /* constructor() {
         super();
-    }
+    } */
 
     send(data) {
         console.log('sending '+data);

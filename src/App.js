@@ -1,7 +1,26 @@
 import React from 'react';
 import './App.css';
+import './setupPeer';
+import { setupPeer, 
+  getDataCon,
+  getCamCon } from './setupPeer';
+
+let callBtn = null;
+let copyBtn = null;
+let sendBtn = null;
+let adrLnk = null;
 
 class InitiatorPanel extends React.Component {
+ 
+  componentDidMount() {
+    callBtn = document.getElementById('call');
+    copyBtn = document.getElementById('copy');
+    sendBtn = document.getElementById('send');
+    adrLnk = document.getElementById('adrlnk');
+    setupPeer();
+    adrLnk.value = getDataCon().getOurAdressLink();
+  }
+
   render() {
     return(
       <div className="initiatorPanel">
