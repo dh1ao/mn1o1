@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import './webrtc/'
 
 class PlayGround extends React.Component {
   render() {
@@ -7,8 +8,8 @@ class PlayGround extends React.Component {
       <div>
         <canvas></canvas>
         <div className="videos">
-          <video className="video"></video>
-          <video className="video"></video>
+          <video id="rVideo" className="video"></video>
+          <video id="lVideo" className="video"></video>
         </div>
       </div>
     );
