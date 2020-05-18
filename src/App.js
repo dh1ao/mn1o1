@@ -26,10 +26,16 @@ class InitiatorPanel extends React.Component {
     alert(data);
   }
 
+  lStrTo(stream) {
+    const lVideo = document.getElementById('lVideo');
+    lVideo.srcObject = stream;
+  }
+
   callbacks = {
     onAddressLink : this.onAdrLink,
     onDataConnection : this.onDataConnection,
-    onData : this.onData
+    onData : this.onData,
+    localStreamTo : this.lStrTo
   }
 
   componentDidMount() {
@@ -60,17 +66,14 @@ class InitiatorPanel extends React.Component {
 }
 
 class PlayGround extends React.Component {
-  rVideo = "rVideo";
-  lVideo = "lVideo";
-  
-    render() {
+  render() {
     return (
       <div>
         <InitiatorPanel/>
         <canvas id='mainDrawArea'></canvas>
         <div className="videos">
           <video id="rVideo" className="video"></video>
-          <video id="lVideo" className="video"></video>          
+          <video id="lVideo" className="video" muted autoPlay></video>          
         </div>
       </div>
     );

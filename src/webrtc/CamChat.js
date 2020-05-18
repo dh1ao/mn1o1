@@ -19,8 +19,8 @@ export class CamChat {
           this.constraints = {
             audio: true,
             video: {
-              width: 320,
-              height: 240
+              width: 128,
+              height: 128
             }
           };
     }

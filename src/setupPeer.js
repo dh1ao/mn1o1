@@ -30,4 +30,5 @@ export function setupPeer(cbs) {
     datacon.onData = cbs.onData;
     camCon = new CamChat(datacon);
     camCon.init();
+    camCon.streamTo = cbs.localStreamTo;
 }
