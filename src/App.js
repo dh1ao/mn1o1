@@ -20,11 +20,16 @@ class InitiatorPanel extends React.Component {
   onDataConnection(conn) {
     sendBtn.disabled = false;
     callBtn.disabled = false;
-}
+  }
+
+  onData(data) {
+    alert(data);
+  }
 
   callbacks = {
     onAddressLink : this.onAdrLink,
-    onDataConnection : this.onDataConnection
+    onDataConnection : this.onDataConnection,
+    onData : this.onData
   }
 
   componentDidMount() {
@@ -33,6 +38,7 @@ class InitiatorPanel extends React.Component {
     sendBtn = document.getElementById('send');
     adrLnk = document.getElementById('adrlnk');
 
+    sendBtn.addEventListener('click', () => getDataCon().send('Wurst'));
     copyBtn.addEventListener('click', () => {
       adrLnk.select();
       document.execCommand("copy");

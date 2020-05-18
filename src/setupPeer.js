@@ -20,8 +20,6 @@ export function setupPeer(cbs) {
     if(!rId) {
         datacon = new PeerConnectorInitiator();
         datacon.onAddressLink = cbs.onAddressLink;
-        console.log(datacon);
-        
         datacon.init();
     }
     else {
@@ -29,6 +27,7 @@ export function setupPeer(cbs) {
         datacon.init(rId);
     }
     datacon.onDataConnection = cbs.onDataConnection;
+    datacon.onData = cbs.onData;
     camCon = new CamChat(datacon);
     camCon.init();
 }
