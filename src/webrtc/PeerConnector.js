@@ -42,8 +42,6 @@ export class PeerConnector {
                 if(this.onDisconnected) {
                     this.onDisconnected();
                 }
-                console.log('on disconnected');
-                this.peer.reconnect();
             });
             this.peer.on('close', () => {
                 if(this.onClose) {

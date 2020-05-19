@@ -1,3 +1,6 @@
+/*
+TODO: onDisconnect handling
+*/
 import React from 'react';
 import './App.css';
 import './setupPeer';
@@ -13,7 +16,7 @@ let adrLnk = null;
 class InitiatorPanel extends React.Component {
 
   onAdrLink(lnk) {
-    adrLnk.value = lnk;
+     adrLnk.value = lnk;
     copyBtn.disabled = false; 
   }
 
@@ -30,12 +33,28 @@ class InitiatorPanel extends React.Component {
     const lVideo = document.getElementById('lVideo');
     lVideo.srcObject = stream;
   }
+  
+  rStrTo(stream) {
+    const rVideo = document.getElementById('rVideo');
+    rVideo.srcObject = stream;
+  }
+
+  onDisconnect() {
+    callBtn.disabled = true;
+    alert('Verbindungsabbruch');
+  }
+
+  makeCall() {
+    getCamCon().call();
+  }
 
   callbacks = {
     onAddressLink : this.onAdrLink,
     onDataConnection : this.onDataConnection,
     onData : this.onData,
-    localStreamTo : this.lStrTo
+    onDisconnect : this.onDisconnect,
+    localStreamTo : this.lStrTo,
+    remoteStreamTo : this.rStrTo
   }
 
   componentDidMount() {
@@ -48,7 +67,8 @@ class InitiatorPanel extends React.Component {
     copyBtn.addEventListener('click', () => {
       adrLnk.select();
       document.execCommand("copy");
-    })
+    });
+    callBtn.addEventListener('click', () => this.makeCall());
     setupPeer(this.callbacks);
     
   }
@@ -72,7 +92,7 @@ class PlayGround extends React.Component {
         <InitiatorPanel/>
         <canvas id='mainDrawArea'></canvas>
         <div className="videos">
-          <video id="rVideo" className="video"></video>
+          <video id="rVideo" className="video" muted autoPlay></video>
           <video id="lVideo" className="video" muted autoPlay></video>          
         </div>
       </div>

@@ -12,7 +12,7 @@ export function getDataCon() {
 
 }
 export function getCamCon() {
-    return datacon;
+    return camCon;
 }
 
 export function setupPeer(cbs) {
@@ -28,7 +28,10 @@ export function setupPeer(cbs) {
     }
     datacon.onDataConnection = cbs.onDataConnection;
     datacon.onData = cbs.onData;
+    datacon.onDisconnected = cbs.onDisconnect;
+    
     camCon = new CamChat(datacon);
     camCon.init();
     camCon.streamTo = cbs.localStreamTo;
+    camCon.callOnStream = cbs.remoteStreamTo;
 }
