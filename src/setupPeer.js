@@ -7,6 +7,13 @@ let rId = null;
 let datacon = null;
 let camCon = null;
 
+export function isInitiator() {
+    if(remoteIdKnown())
+        return false
+    else
+        return true
+}
+
 export function getDataCon() {
     return datacon;
 

@@ -70,9 +70,6 @@ function onData(data) {
     ctx.fillRect(data.x, data.y, 2, 2);
 }
 
-function playgroundInit() {
-    
-}
 
 if(!cam.dataconnection.isInitiator) {
     btnCopy.style.display = 'none';
