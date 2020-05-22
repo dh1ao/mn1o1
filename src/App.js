@@ -97,7 +97,7 @@ class ConnectionPanel extends React.Component {
 
 		if (this.isInitiator) {
 			panel = (
-				<div>
+				<div className='InitiatorPanel'>
 					<input type="text" className="ouradr" id="adrlnk" value={this.state.ouradr} readOnly />
 					<button id="copy" disabled>
 						Kopie
@@ -123,8 +123,8 @@ class ConnectionPanel extends React.Component {
 class PlayGround extends React.Component {
 	render() {
 		return (
-			<div>
-				<ConnectionPanel />
+			<div id='content'>
+				<ConnectionPanel/>
 				<canvas id="mainDrawArea" />
 				<div className="videos">
 					<video id="rVideo" className="video" muted autoPlay />
