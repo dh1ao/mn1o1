@@ -5,21 +5,24 @@ TODO: isInitiator aufräumen und aus setState umbauen
 import React from 'react';
 import './App.css';
 import './setupPeer';
-import { setupPeer, getDataCon, getCamCon } from './setupPeer';
+import { getCamCon, getDataCon, setupPeer } from './setupPeer';
 import { remoteIdKnown } from './webrtc/remoteIdKnown';
+import TextChat from './textchat';
 
 let callBtn = null;
 let copyBtn = null;
 let sendBtn = null;
 let adrLnk = null;
+let drawBtn = null;
+let chatBtn = null;
 
 class ConnectionPanel extends React.Component {
   constructor() {
     super();
 
     this.state = {
-      ouradr : 'keine Ahnung'
-    }
+	  ouradr : 'keine Ahnung',
+	}
   }
 
 	onAdrLink = (lnk) => {
@@ -37,7 +40,8 @@ class ConnectionPanel extends React.Component {
 	}
 
 	onData(data) {
-		alert(data);
+		let txt = document.getElementById('chatTxt');
+		txt.value = data;
 	}
 
 	lStrTo(stream) {
@@ -73,10 +77,10 @@ class ConnectionPanel extends React.Component {
 	componentWillMount() {
     this.isInitiator = !remoteIdKnown();
     }
-
+	
 	componentDidMount() {
-    callBtn = document.getElementById('call');
-    this.callbacks.onAdrLink = this.onAdrLink;
+	callBtn = document.getElementById('call');
+   	this.callbacks.onAdrLink = this.onAdrLink;
 		if (this.isInitiator) {
 			copyBtn = document.getElementById('copy');
 			sendBtn = document.getElementById('send');
@@ -88,18 +92,18 @@ class ConnectionPanel extends React.Component {
 			});
 		}
 		callBtn.addEventListener('click', () => this.makeCall());
+		
 		setupPeer(this.callbacks);
 	}
 
 	render() {
 		let panel;
-		console.log(this.isInitiator);
-
+		
 		if (this.isInitiator) {
 			panel = (
 				<div className='InitiatorPanel'>
 					<input type="text" className="ouradr" id="adrlnk" value={this.state.ouradr} readOnly />
-					<button id="copy" disabled>
+					<button id="copy" className="cpyBtn" disabled>
 						Kopie
 					</button>
 					<button id="send" disabled>
@@ -121,15 +125,50 @@ class ConnectionPanel extends React.Component {
 }
 
 class PlayGround extends React.Component {
+	constructor() {
+		super();
+	
+		this.state = {
+		  chat_z : 1,
+		  draw_z : 1000
+		}
+	}
+
+	activateCanvas() {
+		document.getElementById('mainDrawArea').style.zIndex = 1000;
+		document.getElementsByTagName('textarea')[0].style.zIndex = 1;
+		this.setState({chat_z : 1,
+			draw_z : 1000});
+		console.log('Canvas active');
+	}	
+
+	activateChat() {
+		document.getElementById('mainDrawArea').style.zIndex = 1;
+		document.getElementsByTagName('textarea')[0].style.zIndex = 1000;
+		this.setState({chat_z : 1000,
+			draw_z : 1});
+		console.log('Chat active');
+	}
+	
+	componentDidMount() {
+		drawBtn = document.getElementById('drawing');
+		chatBtn = document.getElementById('textChat');
+		drawBtn.addEventListener('click', () => this.activateCanvas());
+		chatBtn.addEventListener('click', () => this.activateChat());
+	}
+
 	render() {
 		return (
 			<div id='content'>
 				<ConnectionPanel/>
-				<canvas id="mainDrawArea" />
+				<canvas id="mainDrawArea" style={{zIndex: this.state.draw_z}}/>
 				<div className="videos">
-					<video id="rVideo" className="video" muted autoPlay />
+					<video id="rVideo" className="video" autoPlay />
 					<video id="lVideo" className="video" muted autoPlay />
 				</div>
+				<button id="textChat">TextChat</button>
+				<button id="drawing">Drawing</button>
+				<TextChat style={{zIndex: this.state.chat_z}}/>
 			</div>
 		);
 	}

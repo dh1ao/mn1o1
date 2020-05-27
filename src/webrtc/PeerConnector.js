@@ -1,4 +1,4 @@
-import Peer from 'peerjs'; // npm install --save peerjs
+import Peer from 'peerjs';
 
 export class PeerConnector {
     constructor() {
@@ -19,7 +19,10 @@ export class PeerConnector {
     init() {
         return new Promise(resolve=>{
             // this.peer = new Peer({ key: 'lwjd5qra8257b9',
-            this.peer = new Peer({ key: 'peerjs',
+            this.peer = new Peer({  key: 'peerjs', 
+                                    host: 'localhost',
+                                    port: 9000,
+                                    secure: false,
                                     debug : 1,
                                     /* config : { 'iceServers': [
                                          { urls: 'stun:stun.l.google.com:19302' },
@@ -28,8 +31,9 @@ export class PeerConnector {
                                             urls: 'turn:turn.anyfirewall.com:443?transport=tcp',
                                             credential: 'webrtc',
                                             username: 'webrtc'
-                                        }
-                                    ]} */
+                                        } 
+                                    ]}
+                                    */
                                 });
                                 
             this.peer.on('error', (err) => {if(this.onError)
