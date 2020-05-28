@@ -19,6 +19,7 @@ let chatBtn = null;
 let lastX = 0;
 let lastY = 0;
 let points=[];
+let isDrawing = false;
 
 class ConnectionPanel extends React.Component {
   constructor() {
@@ -52,20 +53,21 @@ class ConnectionPanel extends React.Component {
 		if(data.data.type==='DrawPoints' && data.data.widget==='Canvas') {
 			var canvas = document.getElementById('mainDrawArea');
 			var ctx = canvas.getContext("2d");
-			const px = canvas.width/canvas.getBoundingClientRect().width;
-			const py = canvas.height/canvas.getBoundingClientRect().height;
-			ctx.scale(px,py);
-			ctx.setTransform(1, 0, 0, 1, 0, 0);
-			ctx.lineWidth=py;
+			const px = canvas.getBoundingClientRect().width;
+			const py = canvas.getBoundingClientRect().height;
+			canvas.width = px;
+			canvas.height = py;
+			ctx.lineWidth=1;
+
 
 			data.data.points.forEach((point, index) => {
-				var x = point[0];
-				var y = point[1];
+				var x = point[0]*px;
+				var y = point[1]*py;
 				if(index === 0) {
-					ctx.moveTo(x*px, y*py)
+					ctx.moveTo(x, y)
 				}
 				else {
-					ctx.lineTo(x*px,y*py)
+					ctx.lineTo(x,y)
 					ctx.stroke();
 				}
 				console.log(point);
@@ -173,36 +175,35 @@ class PlayGround extends React.Component {
 	onCanvasMouseMove(event) {
 		var canvas = document.getElementById('mainDrawArea');
 		var ctx = canvas.getContext("2d");
-		const px = canvas.width/canvas.getBoundingClientRect().width;
-		const py = canvas.height/canvas.getBoundingClientRect().height;
-		ctx.scale(px,py);
-		ctx.setTransform(1, 0, 0, 1, 0, 0);
-		ctx.lineWidth=py;
-
-		if(event.nativeEvent.which===0)
-			return;
+		const px = canvas.getBoundingClientRect().width;
+		const py = canvas.getBoundingClientRect().height;
 		
+		ctx.lineWidth=1;
+
+		if(!isDrawing) {
+			return;
+		}
 		let x = event.nativeEvent.offsetX;
 		let y = event.nativeEvent.offsetY;
 		
-		ctx.moveTo(lastX*px,lastY*py);
-		ctx.lineTo(x*px,y*py)
+		ctx.moveTo(lastX,lastY);
+		ctx.lineTo(x,y)
 		ctx.stroke();
 		lastX = x;
 		lastY = y;
-		points.push([x,y]);
+		points.push([x/px,y/py]);
 		console.log(points);
 		
 	}
 
 	onCanvasMouseDown(event) {
 		var canvas = document.getElementById('mainDrawArea');
-		var ctx = canvas.getContext("2d");
-		const px = canvas.width/canvas.getBoundingClientRect().width;
-		const py = canvas.height/canvas.getBoundingClientRect().height;
-		ctx.scale(px,py);
-		ctx.setTransform(1, 0, 0, 1, 0, 0);
-
+		const px = canvas.getBoundingClientRect().width;
+		const py = canvas.getBoundingClientRect().height;
+		canvas.width = px;
+		canvas.height = py;
+		
+		isDrawing = true;
 		let data = new DataCom();
 		data.data.type = 'MouseDown';
 		data.data.widget = 'Canvas';
@@ -211,12 +212,12 @@ class PlayGround extends React.Component {
 		lastX = data.data.x;
 		lastY = data.data.y;
 		console.log('Down at '+lastX+','+lastY);
-		points.push([lastX, lastY]);
-		console.log(points);
+		points.push([lastX/px, lastY/py]);
 		getDataCon().send(data);
 	}
 	
 	onCanvasMouseUp(event) {
+		isDrawing = false;
 		let data = new DataCom();
 		data.data.type = 'DrawPoints';
 		data.data.widget = 'Canvas';
