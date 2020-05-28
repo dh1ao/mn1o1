@@ -6,8 +6,8 @@ export class PeerConnectorRemote extends PeerConnector {
     } */
 
     send(data) {
-        console.log('sending '+data);
-        this.dataconnection.send(data);
+        if(this.dataconnection != null)
+            this.dataconnection.send(data);
      }
 
     async init(rId) {

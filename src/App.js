@@ -8,6 +8,7 @@ import './setupPeer';
 import { getCamCon, getDataCon, setupPeer } from './setupPeer';
 import { remoteIdKnown } from './webrtc/remoteIdKnown';
 import TextChat from './textchat';
+import DataCom from './datacom';
 
 let callBtn = null;
 let copyBtn = null;
@@ -15,6 +16,9 @@ let sendBtn = null;
 let adrLnk = null;
 let drawBtn = null;
 let chatBtn = null;
+let lastX = 0;
+let lastY = 0;
+let points=[];
 
 class ConnectionPanel extends React.Component {
   constructor() {
@@ -40,8 +44,40 @@ class ConnectionPanel extends React.Component {
 	}
 
 	onData(data) {
-		let txt = document.getElementById('chatTxt');
-		txt.value = data;
+		if(data.data.type==='MouseDown' && data.data.widget==='Canvas') {
+			console.log('Mouse Down at '+data.data.x+' '+data.data.y);
+			
+		}
+		
+		if(data.data.type==='DrawPoints' && data.data.widget==='Canvas') {
+			var canvas = document.getElementById('mainDrawArea');
+			var ctx = canvas.getContext("2d");
+			const px = canvas.width/canvas.getBoundingClientRect().width;
+			const py = canvas.height/canvas.getBoundingClientRect().height;
+			ctx.scale(px,py);
+			ctx.setTransform(1, 0, 0, 1, 0, 0);
+			ctx.lineWidth=py;
+
+			data.data.points.forEach((point, index) => {
+				var x = point[0];
+				var y = point[1];
+				if(index === 0) {
+					ctx.moveTo(x*px, y*py)
+				}
+				else {
+					ctx.lineTo(x*px,y*py)
+					ctx.stroke();
+				}
+				console.log(point);
+			});
+			
+			
+		}
+		
+		if(data.data.type === 'Text' && data.data.widget==='TextChat') {
+			let txt = document.getElementById('chatTxt');
+			txt.value = data.data.text;
+		}
 	}
 
 	lStrTo(stream) {
@@ -134,6 +170,63 @@ class PlayGround extends React.Component {
 		}
 	}
 
+	onCanvasMouseMove(event) {
+		var canvas = document.getElementById('mainDrawArea');
+		var ctx = canvas.getContext("2d");
+		const px = canvas.width/canvas.getBoundingClientRect().width;
+		const py = canvas.height/canvas.getBoundingClientRect().height;
+		ctx.scale(px,py);
+		ctx.setTransform(1, 0, 0, 1, 0, 0);
+		ctx.lineWidth=py;
+
+		if(event.nativeEvent.which===0)
+			return;
+		
+		let x = event.nativeEvent.offsetX;
+		let y = event.nativeEvent.offsetY;
+		
+		ctx.moveTo(lastX*px,lastY*py);
+		ctx.lineTo(x*px,y*py)
+		ctx.stroke();
+		lastX = x;
+		lastY = y;
+		points.push([x,y]);
+		console.log(points);
+		
+	}
+
+	onCanvasMouseDown(event) {
+		var canvas = document.getElementById('mainDrawArea');
+		var ctx = canvas.getContext("2d");
+		const px = canvas.width/canvas.getBoundingClientRect().width;
+		const py = canvas.height/canvas.getBoundingClientRect().height;
+		ctx.scale(px,py);
+		ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+		let data = new DataCom();
+		data.data.type = 'MouseDown';
+		data.data.widget = 'Canvas';
+		data.data.x = event.nativeEvent.offsetX;
+		data.data.y = event.nativeEvent.offsetY;
+		lastX = data.data.x;
+		lastY = data.data.y;
+		console.log('Down at '+lastX+','+lastY);
+		points.push([lastX, lastY]);
+		console.log(points);
+		getDataCon().send(data);
+	}
+	
+	onCanvasMouseUp(event) {
+		let data = new DataCom();
+		data.data.type = 'DrawPoints';
+		data.data.widget = 'Canvas';
+		data.data.points = points;
+		data.data.x = event.nativeEvent.offsetX;
+		data.data.y = event.nativeEvent.offsetY;
+		getDataCon().send(data);
+		points = [];
+	}
+
 	activateCanvas() {
 		document.getElementById('mainDrawArea').style.zIndex = 1000;
 		document.getElementsByTagName('textarea')[0].style.zIndex = 1;
@@ -161,7 +254,11 @@ class PlayGround extends React.Component {
 		return (
 			<div id='content'>
 				<ConnectionPanel/>
-				<canvas id="mainDrawArea" style={{zIndex: this.state.draw_z}}/>
+				<canvas id="mainDrawArea" 
+					style={{zIndex: this.state.draw_z}}
+					onMouseDown={this.onCanvasMouseDown}
+					onMouseUp={this.onCanvasMouseUp}
+					onMouseMove={this.onCanvasMouseMove}/>
 				<div className="videos">
 					<video id="rVideo" className="video" autoPlay />
 					<video id="lVideo" className="video" muted autoPlay />

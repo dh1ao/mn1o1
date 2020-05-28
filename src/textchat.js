@@ -1,5 +1,6 @@
 import React from 'react'
 import { getDataCon } from './setupPeer';
+import DataCom from './datacom';
 
 class TextChat extends React.Component {
     constructor(props) {
@@ -11,9 +12,13 @@ class TextChat extends React.Component {
     }
     
     handleInput = (event) => {
-        console.log('Wurst');
-        console.log(event.target.value);
-        getDataCon().send(event.target.value);
+        let data = new DataCom();
+        data.data = {
+            type: 'Text',
+            widget : 'TextChat',
+            text: event.target.value
+        };
+        getDataCon().send(data);
     }
 
     render() {

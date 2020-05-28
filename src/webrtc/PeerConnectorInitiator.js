@@ -10,8 +10,8 @@ export class PeerConnectorInitiator extends PeerConnector {
 	}
 
 	send(data) {
-		console.log('sending ' + data);
-		this.dataconnection.send(data);
+		if(this.dataconnection != null)
+			this.dataconnection.send(data);
 	}
 
 	getOurAdressLink(ourId) {
