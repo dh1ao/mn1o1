@@ -6,7 +6,7 @@ export class PeerConnectorRemote extends PeerConnector {
     } */
 
     send(data) {
-        if(this.dataconnection != null)
+        if(this.dataconnection != null && this.dataconnection.open)
             this.dataconnection.send(data);
      }
 

@@ -10,15 +10,15 @@ export class PeerConnectorInitiator extends PeerConnector {
 	}
 
 	send(data) {
-		if(this.dataconnection != null)
+		if(this.dataconnection != null && this.dataconnection.open)
 			this.dataconnection.send(data);
 	}
 
 	getOurAdressLink(ourId) {
 		if (ourId) {
 			// TODO: später wieder auf https ohne port 3000 umstellen
-			// var lnk = 'https://'+window.location.hostname + '/index.html?peer=' + ourId;
-			var lnk = 'http://' + window.location.hostname + ':3000?peer=' + ourId;
+			var lnk = 'https://'+window.location.hostname + '/index.html?peer=' + ourId;
+			// var lnk = 'http://' + window.location.hostname + ':3000/?peer=' + ourId;
 			return lnk;
 		}
 		return '';

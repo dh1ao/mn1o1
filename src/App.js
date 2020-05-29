@@ -20,6 +20,8 @@ let lastX = 0;
 let lastY = 0;
 let points=[];
 let isDrawing = false;
+var canvas = null;
+var ctx = null;
 
 class ConnectionPanel extends React.Component {
   constructor() {
@@ -45,18 +47,11 @@ class ConnectionPanel extends React.Component {
 	}
 
 	onData(data) {
-		if(data.data.type==='MouseDown' && data.data.widget==='Canvas') {
-			console.log('Mouse Down at '+data.data.x+' '+data.data.y);
-			
-		}
-		
 		if(data.data.type==='DrawPoints' && data.data.widget==='Canvas') {
-			var canvas = document.getElementById('mainDrawArea');
-			var ctx = canvas.getContext("2d");
 			const px = canvas.getBoundingClientRect().width;
 			const py = canvas.getBoundingClientRect().height;
-			canvas.width = px;
-			canvas.height = py;
+			// canvas.width = px;
+			// canvas.height = py;
 			ctx.lineWidth=1;
 
 
@@ -70,7 +65,6 @@ class ConnectionPanel extends React.Component {
 					ctx.lineTo(x,y)
 					ctx.stroke();
 				}
-				console.log(point);
 			});
 			
 			
@@ -130,7 +124,13 @@ class ConnectionPanel extends React.Component {
 			});
 		}
 		callBtn.addEventListener('click', () => this.makeCall());
-		
+		window.addEventListener('resize', () => {
+			canvas = document.getElementById('mainDrawArea');
+			ctx = canvas.getContext("2d");
+			canvas.width = canvas.getBoundingClientRect().width;
+			canvas.height = canvas.getBoundingClientRect().height;
+			console.log('Resize');
+		})
 		setupPeer(this.callbacks);
 	}
 
@@ -173,8 +173,6 @@ class PlayGround extends React.Component {
 	}
 
 	onCanvasMouseMove(event) {
-		var canvas = document.getElementById('mainDrawArea');
-		var ctx = canvas.getContext("2d");
 		const px = canvas.getBoundingClientRect().width;
 		const py = canvas.getBoundingClientRect().height;
 		
@@ -192,16 +190,13 @@ class PlayGround extends React.Component {
 		lastX = x;
 		lastY = y;
 		points.push([x/px,y/py]);
-		console.log(points);
-		
 	}
 
 	onCanvasMouseDown(event) {
-		var canvas = document.getElementById('mainDrawArea');
 		const px = canvas.getBoundingClientRect().width;
 		const py = canvas.getBoundingClientRect().height;
-		canvas.width = px;
-		canvas.height = py;
+		// canvas.width = px;
+		// canvas.height = py;
 		
 		isDrawing = true;
 		let data = new DataCom();
@@ -229,6 +224,11 @@ class PlayGround extends React.Component {
 	}
 
 	activateCanvas() {
+		const px = canvas.getBoundingClientRect().width;
+		const py = canvas.getBoundingClientRect().height;
+		canvas.width = px;
+		canvas.height = py;
+
 		document.getElementById('mainDrawArea').style.zIndex = 1000;
 		document.getElementsByTagName('textarea')[0].style.zIndex = 1;
 		this.setState({chat_z : 1,
@@ -249,6 +249,11 @@ class PlayGround extends React.Component {
 		chatBtn = document.getElementById('textChat');
 		drawBtn.addEventListener('click', () => this.activateCanvas());
 		chatBtn.addEventListener('click', () => this.activateChat());
+		canvas = document.getElementById('mainDrawArea');
+		ctx = canvas.getContext("2d");
+		this.activateCanvas();
+		this.activateChat();
+
 	}
 
 	render() {
@@ -259,6 +264,7 @@ class PlayGround extends React.Component {
 					style={{zIndex: this.state.draw_z}}
 					onMouseDown={this.onCanvasMouseDown}
 					onMouseUp={this.onCanvasMouseUp}
+					onMouseOut={this.onCanvasMouseUp}
 					onMouseMove={this.onCanvasMouseMove}/>
 				<div className="videos">
 					<video id="rVideo" className="video" autoPlay />
