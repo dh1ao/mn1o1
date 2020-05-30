@@ -23,9 +23,8 @@ class TextChat extends React.Component {
 
     render() {
         return (
-            <div className='textchat'>
+            <div id='textchat'>
                 <textarea id='chatTxt' onChange={this.handleInput.bind(this)}/>
-                <button id='sendMsg' >Senden</button>
             </div>
         )
     }

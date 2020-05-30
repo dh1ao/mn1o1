@@ -21,12 +21,12 @@ export class PeerConnector {
             // this.peer = new Peer({ key: 'lwjd5qra8257b9',
             this.peer = new Peer({  
                                     key: 'peerjs', 
-                                    host: '14fba729650b.ngrok.io',
+                                    host: 'dd9f9232a3ca.ngrok.io',
                                     //host: 'localhost',
                                     port: 80,
                                     path: "/",
                                     secure: false,
-                                    debug : 3, 
+                                    debug : 0, 
                                     /* config : { 'iceServers': [
                                          { urls: 'stun:stun.l.google.com:19302' },
                                          { urls: 'turn:homeo@turn.bistri.com:80', username : 'homeo', credential: 'homeo' },

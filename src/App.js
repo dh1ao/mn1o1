@@ -1,6 +1,5 @@
 /*
-TODO: onDisconnect handling
-TODO: isInitiator aufräumen und aus setState umbauen
+TODO: ScreenShare
 */
 import React from 'react';
 import './App.css';
@@ -9,6 +8,7 @@ import { getCamCon, getDataCon, setupPeer } from './setupPeer';
 import { remoteIdKnown } from './webrtc/remoteIdKnown';
 import TextChat from './textchat';
 import DataCom from './datacom';
+import { ScreenShare } from './screenshare';
 
 let callBtn = null;
 let copyBtn = null;
@@ -16,6 +16,7 @@ let sendBtn = null;
 let adrLnk = null;
 let drawBtn = null;
 let chatBtn = null;
+let screenBtn = null;
 let lastX = 0;
 let lastY = 0;
 let points=[];
@@ -168,7 +169,8 @@ class PlayGround extends React.Component {
 	
 		this.state = {
 		  chat_z : 1,
-		  draw_z : 1000
+		  draw_z : 1,
+		  screen_z : 1,
 		}
 	}
 
@@ -230,30 +232,62 @@ class PlayGround extends React.Component {
 		canvas.height = py;
 
 		document.getElementById('mainDrawArea').style.zIndex = 1000;
-		document.getElementsByTagName('textarea')[0].style.zIndex = 1;
-		this.setState({chat_z : 1,
-			draw_z : 1000});
+		document.getElementById('ScreenShare').style.zIndex = 1;
+		document.getElementById('textchat').style.zIndex = 1;
+		this.setState({
+			chat_z : 1,
+			draw_z : 1000,
+			screen_z : 1
+		});
 		console.log('Canvas active');
 	}	
 
 	activateChat() {
 		document.getElementById('mainDrawArea').style.zIndex = 1;
-		document.getElementsByTagName('textarea')[0].style.zIndex = 1000;
-		this.setState({chat_z : 1000,
-			draw_z : 1});
+		document.getElementById('ScreenShare').style.zIndex = 1;
+		document.getElementById('textchat').style.zIndex = 1000;
+		this.setState({
+			chat_z : 1000,
+			draw_z : 1,
+			screen_z : 1
+		});
 		console.log('Chat active');
 	}
 	
+	async activateScreen() {
+		let scrnVideo = document.getElementById('scrnVid');
+		document.getElementById('mainDrawArea').style.zIndex = 1;
+		document.getElementById('textchat').style.zIndex = 1;
+		scrnVideo.style.zIndex = 1000;
+		
+		this.setState({
+			chat_z : 1,
+			draw_z : 1,
+			screen_z : 1000});
+		await window.ScreenShare.startCapture();
+		console.log('Screenshare active');
+
+		let ScreenShareDiv = document.getElementById('ScreenShare');
+		console.log(ScreenShareDiv.getBoundingClientRect().width);
+		console.log(ScreenShareDiv.getBoundingClientRect().height);
+		ScreenShareDiv.width = scrnVideo.getBoundingClientRect().width;
+		ScreenShareDiv.height = scrnVideo.getBoundingClientRect().height;
+		scrnVideo.width = ScreenShareDiv.width;
+		scrnVideo.height = ScreenShareDiv.height;
+		
+	}
+
 	componentDidMount() {
-		drawBtn = document.getElementById('drawing');
-		chatBtn = document.getElementById('textChat');
+		drawBtn = document.getElementById('drawingBtn');
+		chatBtn = document.getElementById('textChatBtn');
+		screenBtn = document.getElementById('screenBtn');
 		drawBtn.addEventListener('click', () => this.activateCanvas());
 		chatBtn.addEventListener('click', () => this.activateChat());
+		screenBtn.addEventListener('click', () => this.activateScreen());
 		canvas = document.getElementById('mainDrawArea');
 		ctx = canvas.getContext("2d");
 		this.activateCanvas();
 		this.activateChat();
-
 	}
 
 	render() {
@@ -270,9 +304,11 @@ class PlayGround extends React.Component {
 					<video id="rVideo" className="video" autoPlay />
 					<video id="lVideo" className="video" muted autoPlay />
 				</div>
-				<button id="textChat">TextChat</button>
-				<button id="drawing">Drawing</button>
+				<button id="textChatBtn">TextChat</button>
+				<button id="drawingBtn">Drawing</button>
+				<button id="screenBtn">Screen</button>
 				<TextChat style={{zIndex: this.state.chat_z}}/>
+				<ScreenShare style={{zIndex: this.state.screen_z}} />
 			</div>
 		);
 	}
